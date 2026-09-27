@@ -1,25 +1,34 @@
-const CACHE_NAME = "yamate-v6"; // v5→v6に上げて更新
+const CACHE_NAME = "yamate-v10-final";
 const urlsToCache = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-152.png" // ← 512ではなく152
+  "./icon-512.png"
 ];
 
-self.addEventListener("install", e=>{
-  self.skipWaiting();
-  e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(urlsToCache)));
-});
-
-self.addEventListener("activate", e=>{
+self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    ))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache).catch((err) => {
+        console.warn("cache addAll failed", err);
+      });
+    })
   );
 });
 
-self.addEventListener("fetch", e=>{
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((r) => r || fetch(e.request))
+  );
+});
+
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+      );
+    })
+  );
 });
