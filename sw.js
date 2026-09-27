@@ -1,10 +1,10 @@
-const CACHE_NAME = "yamate-v5";
+const CACHE_NAME = "yamate-v6"; // v5→v6に上げて更新
 const urlsToCache = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-152.png" // ← 512ではなく152
 ];
 
 self.addEventListener("install", e=>{
